@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Справочник Kotlin и Android — примеры, карточки и викторина</title>
+  <meta name="description" content="Справочник по Kotlin и разработке Android на русском и узбекском: ключевые слова, коллекции, корутины, Jetpack Compose. Примеры с проверенным выводом, карточки и викторина.">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0f1822">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f1822'/%3E%3Cpath d='M16 14h12v14L40 14h14L36 32l18 18H40L28 36v14H16z' fill='%233ddc84'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Перейти к содержимому</a>
+
+  <header class="topbar">
+    <a class="brand" href="#reference" aria-label="Kotlin — Android">
+      <span class="brand-mark" aria-hidden="true">K</span>
+      <span class="brand-name">Kotlin</span>
+      <span class="brand-sub" data-i18n="brand_sub">Android</span>
+    </a>
+
+    <nav class="tabs" id="tabs" data-i18n-attr="aria-label:tabs_aria" aria-label="Разделы сайта">
+      <a class="tab" href="#reference" data-view="reference"><span class="tab-icon" data-icon="book"></span><span class="tab-label" data-i18n="tab_reference">Справочник</span></a>
+      <a class="tab" href="#cards" data-view="cards"><span class="tab-icon" data-icon="cards"></span><span class="tab-label" data-i18n="tab_cards">Карточки</span><span class="badge" id="dueBadge" hidden></span></a>
+      <a class="tab" href="#quiz" data-view="quiz"><span class="tab-icon" data-icon="quiz"></span><span class="tab-label" data-i18n="tab_quiz">Викторина</span></a>
+      <a class="tab" href="#play" data-view="play"><span class="tab-icon" data-icon="terminal"></span><span class="tab-label" data-i18n="tab_play">Песочница</span></a>
+    </nav>
+
+    <div class="top-tools">
+      <div class="lang" id="langSwitch" role="group" data-i18n-attr="aria-label:lang_aria" aria-label="Язык интерфейса">
+        <button type="button" class="lang-btn" data-lang="ru" aria-pressed="true" lang="ru">RU</button>
+        <button type="button" class="lang-btn" data-lang="uz" aria-pressed="false" lang="uz">UZ</button>
+      </div>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Переключить тему оформления"></button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+
+    <!-- ===================== СПРАВОЧНИК ===================== -->
+    <section class="view" id="view-reference" aria-labelledby="h-reference">
+      <div class="hero">
+        <div class="hero-text">
+          <h1 id="h-reference" tabindex="-1" data-i18n="hero_title">Kotlin и Android: справочник, где примеры можно запустить</h1>
+          <p class="lead" id="heroLead"></p>
+          <div class="hero-actions">
+            <button class="btn primary" id="btnContinue" type="button"></button>
+            <a class="btn" href="#cards" data-i18n="btn_cards">Повторить карточками</a>
+          </div>
+          <div class="hero-progress" id="heroProgress">
+            <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
+            <p class="hero-progress-text" id="heroProgressText"></p>
+          </div>
+        </div>
+        <div class="hero-try">
+          <p class="hero-try-hint" data-i18n="hero_try_hint">Измените код и запустите его онлайн — в Kotlin Playground.</p>
+          <div id="heroSnippet"></div>
+        </div>
+      </div>
+
+      <div class="layout">
+        <aside class="side" data-i18n-attr="aria-label:side_aria" aria-label="Содержание справочника">
+          <div class="side-inner">
+            <div class="side-total">
+              <svg class="ring" viewBox="0 0 44 44" aria-hidden="true"><circle class="ring-bg" cx="22" cy="22" r="18"/><circle class="ring-fg" id="ringFg" cx="22" cy="22" r="18" pathLength="100"/></svg>
+              <p class="side-total-text"><strong id="sideTotalPct">0%</strong><span id="sideTotalSub"></span></p>
+            </div>
+            <nav class="side-nav" id="sideNav" data-i18n-attr="aria-label:side_nav_aria" aria-label="Разделы справочника"></nav>
+            <button class="link-btn" id="resetProgress" type="button" data-i18n="reset_progress">Сбросить прогресс</button>
+            <p class="side-warn" id="storageWarn" hidden data-i18n="storage_warn"></p>
+          </div>
+        </aside>
+
+        <div class="content">
+          <details class="about" id="about">
+            <summary data-i18n="about_summary">Что такое Kotlin и дорожная карта Android-разработчика</summary>
+            <div class="about-body">
+              <p data-i18n-html="about_p1"></p>
+              <p data-i18n-html="about_p2"></p>
+              <ol class="roadmap" id="roadmap"></ol>
+            </div>
+          </details>
+
+          <div class="toolbar" id="toolbar">
+            <div class="search">
+              <span class="search-icon" data-icon="search" aria-hidden="true"></span>
+              <input id="search" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-attr="placeholder:search_placeholder;aria-label:search_aria">
+              <button class="icon-btn small" id="searchClear" type="button" data-i18n-attr="aria-label:search_clear" hidden></button>
+            </div>
+            <div class="filters">
+              <div class="chip-group" role="group" data-i18n-attr="aria-label:filter_level_aria" data-filter="level">
+                <button class="chip" type="button" data-value="0" aria-pressed="true" data-i18n="lvl_all">Все уровни</button>
+                <button class="chip" type="button" data-value="1" aria-pressed="false" data-i18n="lvl_1">Основы</button>
+                <button class="chip" type="button" data-value="2" aria-pressed="false" data-i18n="lvl_2">Дальше</button>
+                <button class="chip" type="button" data-value="3" aria-pressed="false" data-i18n="lvl_3">Продвинутое</button>
+              </div>
+              <div class="chip-group" role="group" data-i18n-attr="aria-label:filter_status_aria" data-filter="status">
+                <button class="chip" type="button" data-value="all" aria-pressed="true" data-i18n="st_all">Все</button>
+                <button class="chip" type="button" data-value="new" aria-pressed="false" data-i18n="st_new">Не выучено</button>
+                <button class="chip" type="button" data-value="learned" aria-pressed="false" data-i18n="st_learned">Выучено</button>
+              </div>
+            </div>
+            <p class="count" id="resultCount" aria-live="polite"></p>
+          </div>
+
+          <div id="sections"></div>
+
+          <div class="empty" id="emptyState" hidden>
+            <p class="empty-title" data-i18n="empty_title">Ничего не найдено</p>
+            <p data-i18n="empty_text">Попробуйте другое слово или снимите фильтры.</p>
+            <button class="btn" id="emptyReset" type="button" data-i18n="empty_reset">Сбросить поиск и фильтры</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== КАРТОЧКИ ===================== -->
+    <section class="view narrow" id="view-cards" aria-labelledby="h-cards" hidden>
+      <h1 class="view-title" id="h-cards" tabindex="-1" data-i18n="cards_title">Карточки для запоминания</h1>
+      <p class="view-lead" data-i18n="cards_lead"></p>
+      <div class="setup" id="cardsSetup">
+        <label class="field"><span data-i18n="setup_section">Раздел</span><select id="cardsScope"></select></label>
+        <label class="field"><span data-i18n="setup_level">Уровень</span>
+          <select id="cardsLevel"></select>
+        </label>
+        <button class="btn primary" id="cardsStart" type="button" data-i18n="cards_start">Начать раунд</button>
+      </div>
+      <div id="cardsStage" class="stage"></div>
+    </section>
+
+    <!-- ===================== ВИКТОРИНА ===================== -->
+    <section class="view narrow" id="view-quiz" aria-labelledby="h-quiz" hidden>
+      <h1 class="view-title" id="h-quiz" tabindex="-1" data-i18n="quiz_title">Викторина</h1>
+      <p class="view-lead" data-i18n="quiz_lead"></p>
+      <div class="setup" id="quizSetup">
+        <label class="field"><span data-i18n="setup_section">Раздел</span><select id="quizScope"></select></label>
+        <label class="field"><span data-i18n="setup_level">Уровень</span>
+          <select id="quizLevel"></select>
+        </label>
+        <button class="btn primary" id="quizStart" type="button" data-i18n="quiz_start">Начать викторину</button>
+      </div>
+      <div id="quizStage" class="stage"></div>
+    </section>
+
+    <!-- ===================== ПЕСОЧНИЦА ===================== -->
+    <section class="view" id="view-play" aria-labelledby="h-play" hidden>
+      <div class="play-head">
+        <h1 class="view-title" id="h-play" tabindex="-1" data-i18n="play_title">Песочница</h1>
+        <p class="view-lead" data-i18n="play_lead"></p>
+      </div>
+      <div id="playHost" class="play-host"></div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p data-i18n="footer_1"></p>
+    <p data-i18n="footer_2"></p>
+  </footer>
+
+  <button class="to-top" id="toTop" type="button" data-i18n-attr="aria-label:to_top" hidden></button>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <noscript><p class="noscript">Для работы справочника нужен включённый JavaScript. / Qo‘llanma ishlashi uchun JavaScript kerak.</p></noscript>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
