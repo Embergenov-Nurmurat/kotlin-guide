@@ -1074,6 +1074,7 @@
     applyFilters();
     updateProgressUi();
     Theme.paint();
+    if (Visitors.n != null) Visitors.show(Visitors.n);
     Cards.relang();
     Quiz.relang();
     const resetBtn = $("#resetProgress");
@@ -1081,6 +1082,51 @@
     resetBtn.textContent = t("reset_progress");
     document.title = t("doc_title_" + currentView);
   }
+
+  /* ───────── Счётчик устройств ─────────
+     Устройство = браузер с сохранённым случайным id (localStorage + cookie).
+     Один и тот же браузер считается один раз, сколько бы раз он ни заходил.
+     Нужен сервер server.js; при открытии файла напрямую счётчик скрыт. */
+  const Visitors = {
+    KEY: "kd_device",
+    deviceId() {
+      let id = "";
+      try { id = localStorage.getItem(this.KEY) || ""; } catch (e) {}
+      if (!id) {
+        const m = document.cookie.match(/(?:^|; )kd_device=([\w-]{16,64})/);
+        if (m) id = m[1];
+      }
+      if (!/^[\w-]{16,64}$/.test(id)) {
+        const a = new Uint8Array(16);
+        (window.crypto || window.msCrypto).getRandomValues(a);
+        id = Array.from(a, (b) => b.toString(16).padStart(2, "0")).join("");
+      }
+      try { localStorage.setItem(this.KEY, id); } catch (e) {}
+      document.cookie = "kd_device=" + id + "; max-age=63072000; path=/; SameSite=Lax";
+      return id;
+    },
+    show(n) {
+      const box = $("#visitors"), num = $("#visitorsN");
+      if (!box || !num || !Number.isFinite(n)) return;
+      this.n = n;
+      num.textContent = n.toLocaleString(lang === "uz" ? "uz-UZ" : "ru-RU");
+      box.hidden = false;
+    },
+    async init() {
+      if (location.protocol === "file:") return;
+      try {
+        const r = await fetch("api/visit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: this.deviceId() }),
+          cache: "no-store"
+        });
+        if (!r.ok) return;
+        const d = await r.json();
+        this.show(d.count);
+      } catch (e) { /* сервера нет — счётчик остаётся скрытым */ }
+    }
+  };
 
   function init() {
     $$("[data-icon]").forEach((n) => n.append(icon(n.dataset.icon)));
@@ -1110,6 +1156,7 @@
 
     window.addEventListener("hashchange", route);
     route();
+    Visitors.init();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();

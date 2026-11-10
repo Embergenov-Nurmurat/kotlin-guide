@@ -608,3 +608,16 @@ img, svg, video { max-width: 100%; }
   .hero, .layout { padding-left: 12px; padding-right: 12px; }
   .view.narrow, #view-play { padding-left: 12px; padding-right: 12px; }
 }
+
+/* ───────────── Строка с авторством и счётчик ───────────── */
+.credit-bar {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 16px;
+  padding: 8px max(24px, env(safe-area-inset-left)); background: var(--surface-2);
+  border-bottom: 1px solid var(--line); font-size: .8125rem; color: var(--muted);
+}
+.credit strong { color: var(--ink); font-weight: 600; }
+.visitors { white-space: nowrap; }
+.visitors strong { color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 700; }
+@media (max-width: 720px) {
+  .credit-bar { padding: 7px 14px; font-size: .75rem; line-height: 1.4; }
+}

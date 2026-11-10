@@ -1,0 +1,8 @@
+{
+  "name": "kotlin-android-spravochnik",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Справочник Kotlin и Android (RU / UZ) со счётчиком устройств",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}

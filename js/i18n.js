@@ -91,7 +91,9 @@ window.KD_I18N = {
     footer_2: "Онлайн-запуск использует Kotlin Playground. Прогресс хранится только на этом устройстве.",
     toast_busy: "Подождите, идёт загрузка.",
     noscript: "Для работы справочника нужен включённый JavaScript.",
-    to_top: "Наверх"
+    to_top: "Наверх",
+    credit: "Сайт сделан вместе с <strong>Claude Sonnet 5.5</strong> и <strong>Embergenov Nurmurat</strong>",
+    visitors_label: "Устройств заходило:"
   },
 
   uz: {
@@ -180,6 +182,8 @@ window.KD_I18N = {
     footer_2: "Onlayn ishga tushirish Kotlin Playground’dan foydalanadi. Jarayon faqat shu qurilmada saqlanadi.",
     toast_busy: "Kuting, yuklanmoqda.",
     noscript: "Qo‘llanma ishlashi uchun JavaScript yoqilgan bo‘lishi kerak.",
-    to_top: "Tepaga"
+    to_top: "Tepaga",
+    credit: "Sayt <strong>Claude Sonnet 5.5</strong> va <strong>Embergenov Nurmurat</strong> hamkorligida yaratilgan",
+    visitors_label: "Kirgan qurilmalar:"
   }
 };
