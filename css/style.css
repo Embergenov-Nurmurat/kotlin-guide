@@ -632,3 +632,20 @@ img, svg, video { max-width: 100%; }
 .rel-chip { min-height: 32px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--line-strong); background: transparent; color: var(--sec); font: 600 .8125rem var(--font-mono); }
 .rel-chip:hover { background: var(--surface-2); border-color: var(--sec); }
 .lang-btn { min-width: 38px; }
+
+/* ───────────── Kotlin Playground: ko‘rinishni sayt dizayniga moslash ───────────── */
+.play-host { width: 100%; min-width: 0; }
+.play-host .executable-fragment-wrapper,
+.snip-code .executable-fragment-wrapper { max-width: 100%; border-radius: 14px; overflow: hidden; border: 1px solid var(--line-strong, var(--line)); box-shadow: 0 6px 24px rgba(0, 0, 0, .12); }
+.play-host .CodeMirror,
+.snip-code .CodeMirror { font-family: var(--font-mono, ui-monospace, Menlo, Consolas, monospace); font-size: .9375rem; line-height: 1.7; padding: 6px 0; }
+.play-host .CodeMirror-scroll { min-height: 300px; }
+.play-host .CodeMirror-lines { padding: 10px 0; }
+.play-host .executable-fragment-end,
+.play-host .fragment-end { padding: 8px 12px; font-size: .8125rem; }
+.play-host .CodeMirror-sizer { min-width: 0 !important; }
+@media (max-width: 720px) {
+  .play-host .CodeMirror, .snip-code .CodeMirror { font-size: .875rem; line-height: 1.6; }
+  .play-host .CodeMirror-scroll { min-height: 220px; }
+  .play-host .executable-fragment-wrapper { border-radius: 12px; }
+}
