@@ -17,7 +17,7 @@
   const REVIEW_DAYS = [0, 1, 3, 7, 14, 30]; // через сколько дней повторять
   const SESSION_SIZE = 15;
   const QUIZ_SIZE = 10;
-  const LANGS = ["ru", "uz"];
+  const LANGS = ["ru", "uz", "en"];
   const KEY = {
     progress: "kd:v1:progress",
     theme: "kd:v1:theme",
@@ -186,7 +186,7 @@
     const saved = Store.get(KEY.lang, null);
     if (LANGS.includes(saved)) return saved;
     const nav = (navigator.languages && navigator.languages[0]) || navigator.language || "ru";
-    return /^uz/i.test(nav) ? "uz" : "ru";
+    return /^uz/i.test(nav) ? "uz" : /^en/i.test(nav) ? "en" : "ru";
   }
   let lang = detectLang();
 
@@ -201,6 +201,7 @@
   const levelName = (n) => t("lvl_" + n);
   function pluralWord(n, forms) {
     if (forms.length === 1) return forms[0];
+    if (forms.length === 2) return n === 1 ? forms[0] : forms[1];   // английский: 1 / остальные
     const m10 = n % 10, m100 = n % 100;
     if (m10 === 1 && m100 !== 11) return forms[0];
     if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return forms[1];
@@ -224,6 +225,17 @@
 
   /* ───────────────────────── Данные ───────────────────────── */
   const SECTIONS = DATA.sections;
+  // Английский текст и расширенные сведения лежат в отдельных файлах (data_en.js, data_more.js)
+  const EN = window.KD_EN || { sections: {}, roadmap: [], items: {} };
+  const MORE = window.KD_MORE || {};
+  SECTIONS.forEach((sec) => {
+    const x = EN.sections && EN.sections[sec.id];
+    if (x) ["title", "short", "desc"].forEach((k) => { if (x[k]) sec[k].en = x[k]; });
+  });
+  (DATA.roadmap || []).forEach((step, i) => {
+    const x = EN.roadmap && EN.roadmap[i];
+    if (x) { step.title.en = x.title; step.text.en = x.text; }
+  });
   const ENTRIES = [];
   const BY_ID = new Map();
   SECTIONS.forEach((sec, si) => {
@@ -233,12 +245,17 @@
         id: sec.id + ":" + name, sec, si, ii, name, code,
         desc: { ru, uz }, note: { ru: nru || "", uz: nuz || "" }, lvl: lvl || 2, opts: opts || {}
       };
+      const en = EN.items && EN.items[e.id];
+      if (en) { e.desc.en = en[0] || ru; e.note.en = en[1] || ""; }
+      const more = MORE[e.id];
+      e.more = more ? { more: more.more || {}, mistake: more.mistake || {}, related: more.related || [] } : null;
       e.hay = {};
-      LANGS.forEach((l) => { e.hay[l] = norm([name, e.desc[l], e.note[l], code, sec.title[l]].join(" ")); });
+      LANGS.forEach((l) => { e.hay[l] = norm([name, e.desc[l] || e.desc.ru, e.note[l] || e.note.ru, code, (sec.title[l] || sec.title.ru), (e.more ? (e.more.more[l] || "") + " " + (e.more.mistake[l] || "") : "")].join(" ")); });
       ENTRIES.push(e);
       BY_ID.set(e.id, e);
     });
   });
+  const ID_BY_NAME = new Map(ENTRIES.map((e) => [e.name, e.id]));
   const RUNNABLE_COUNT = ENTRIES.filter((e) => e.opts.run).length;
 
   /* ───────────────────────── Прогресс ───────────────────────── */
@@ -484,12 +501,29 @@
     try { history.replaceState(null, "", open ? entryHash(id) : "#reference"); } catch (e) { /* file:// в некоторых браузерах */ }
   }
 
+  /** Расширенные сведения: подробности, частая ошибка, связанные понятия. */
+  function appendMore(inner, e) {
+    if (!e.more) return;
+    const more = L(e.more.more), mistake = L(e.more.mistake);
+    const related = e.more.related.map((n) => BY_ID.get(ID_BY_NAME.get(n))).filter(Boolean);
+    if (!more && !mistake && !related.length) return;
+    const box = el("div", { class: "e-more" });
+    if (more) box.append(el("h3", { class: "e-more-title", text: t("more_label") }), richText(el("p", { class: "e-more-text" }), more));
+    if (mistake) box.append(el("p", { class: "e-mistake" }, el("strong", { text: t("mistake_label") }), richText(el("span"), mistake)));
+    if (related.length) {
+      box.append(el("p", { class: "e-related" }, el("span", { class: "e-related-label", text: t("related_label") + ": " }),
+        ...related.map((x) => el("button", { class: "rel-chip", type: "button", title: L(x.desc), onclick: () => { location.hash = entryHash(x.id); } }, x.name))));
+    }
+    inner.append(box);
+  }
+
   function buildPanel(r) {
     const e = r.item;
     const inner = $(".e-panel-in", r.panel);
     inner.append(createSnippet({ name: e.name, code: e.code, opts: e.opts, secId: e.sec.id }));
     const note = L(e.note);
     if (note) inner.append(el("p", { class: "e-note" }, el("strong", { text: t("note_label") }), richText(el("span"), note)));
+    appendMore(inner, e);
     const learnBtn = el("button", { class: "btn learn-btn", type: "button", "aria-pressed": String(Progress.learned(e.id)), onclick: () => Progress.toggleLearned(e.id) });
     const linkBtn = el("button", { class: "btn", type: "button", onclick: async () => {
       const url = location.href.split("#")[0] + entryHash(e.id);
@@ -1109,7 +1143,7 @@
       const box = $("#visitors"), num = $("#visitorsN");
       if (!box || !num || !Number.isFinite(n)) return;
       this.n = n;
-      num.textContent = n.toLocaleString(lang === "uz" ? "uz-UZ" : "ru-RU");
+      num.textContent = n.toLocaleString(lang === "uz" ? "uz-UZ" : lang === "en" ? "en-US" : "ru-RU");
       box.hidden = false;
     },
     async init() {
